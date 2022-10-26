@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfg>
+    <name>John</name>
+    <age>12</age>
+    <address street="Lenin str">
+        <items>
+            <item>1</item>
+            <item>2</item>
+            <item>3</item>
+            <item>4</item>
+        </items>
+    </address>
+</cfg>
