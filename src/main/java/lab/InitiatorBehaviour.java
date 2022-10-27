@@ -13,7 +13,7 @@ import java.util.Random;
 
 
 @Slf4j
-public class AcceptOfInitiation extends Behaviour {
+public class InitiatorBehaviour extends Behaviour {
     private final List<String> agents = Arrays.asList("Agent1", "Agent2", "Agent3");
     List<AID> receivers = new ArrayList<>();
     boolean finish;
@@ -23,7 +23,7 @@ public class AcceptOfInitiation extends Behaviour {
     private List<Double>  funcResultA2 = new ArrayList<>();
     private List<Double>  funcResultA3 = new ArrayList<>();
     private MessageTemplate mt = MessageTemplate.or(
-            MessageTemplate.MatchProtocol("Slave"),
+            MessageTemplate.MatchProtocol("ResponseFromSlave"),
             MessageTemplate.MatchProtocol("Initiator"));
     private Random r = new Random();
 
@@ -55,10 +55,10 @@ public class AcceptOfInitiation extends Behaviour {
                         receivers.add(new AID(agent, false));
                     }
                 }
-                myAgent.addBehaviour(new SendParams(myAgent,1000, receivers,x,delta));
+                myAgent.addBehaviour(new SendParamsBehaviour(myAgent,1000, receivers,x,delta));
             }
 
-            if (msg.getProtocol().equals("Slave")) {
+            if (msg.getProtocol().equals("ResponseFromSlave")) {
                 switch (msg.getSender().getLocalName()) {
                     case "Agent1":
                         for (String Fx1 : msg.getContent().split(", ")) {
@@ -91,11 +91,7 @@ public class AcceptOfInitiation extends Behaviour {
 
                 // Если достаточная точность расчетов достигнута, то завершаем поведение
                 if (delta < 0.01) {
-                    log.info("Достаточная точность расчетов достигнута");
-                    log.info("Минимальное значение функции: " + String.format("%.3f", func.get(1)));
-                    log.info("Значение х=" + String.format("%.3f", x));
-                    log.info("Значение delta=" + String.format("%.3f", delta));
-                    finish = true;
+                    finish(func.get(1));
                 } else {
                     double minRes = func.get(0);
                     int minId = 0;
@@ -112,15 +108,23 @@ public class AcceptOfInitiation extends Behaviour {
                             log.info("Новое значение х=" + String.format("%.3f", x));
                             log.info("Значение delta=" + String.format("%.3f", delta));
                             log.info("--------------------------------------------------------");
-                            myAgent.addBehaviour(new InitiatorTransfer(myAgent,1000, x, delta));
+                            if (delta < 0.01) {
+                                finish(func.get(minId));
+                            } else {
+                                myAgent.addBehaviour(new InitiatorTransferBehaviour(myAgent,1000, x, delta));
+                            }
                             break;
                         case 1:
                             delta = delta / 2;
                             log.info("Промежуточное значение функции: " + String.format("%.3f", func.get(minId)));
                             log.info("Значение х=" + String.format("%.3f", x));
                             log.info("Новое значение delta=" + String.format("%.3f", delta));
-                            myAgent.addBehaviour(new InitiatorTransfer(myAgent,1000, x, delta));
                             log.info("--------------------------------------------------------");
+                            if (delta < 0.01) {
+                                finish(func.get(minId));
+                            } else {
+                                myAgent.addBehaviour(new InitiatorTransferBehaviour(myAgent,1000, x, delta));
+                            }
                             break;
                         case 2:
                             x = x + delta;
@@ -128,7 +132,11 @@ public class AcceptOfInitiation extends Behaviour {
                             log.info("Новое значение х=" + String.format("%.3f", x));
                             log.info("Значение delta=" + String.format("%.3f", delta));
                             log.info("--------------------------------------------------------");
-                            myAgent.addBehaviour(new InitiatorTransfer(myAgent,1000, x, delta));
+                            if (delta < 0.01) {
+                                finish(func.get(minId));
+                            } else {
+                                myAgent.addBehaviour(new InitiatorTransferBehaviour(myAgent,1000, x, delta));
+                            }
                             break;
                     }
                 }
@@ -142,5 +150,14 @@ public class AcceptOfInitiation extends Behaviour {
     @Override
     public boolean done() {
         return finish;
+    }
+
+    public void finish(Double y) {
+        log.info("+++++++++++++++++++++++++++++++++++++++++++++++++");
+        log.info("Достаточная точность расчетов достигнута");
+        log.info("Минимальное значение функции: " + String.format("%.3f", y));
+        log.info("Значение х=" + String.format("%.3f", x));
+        log.info("Значение delta=" + String.format("%.3f", delta));
+        finish = true;
     }
 }

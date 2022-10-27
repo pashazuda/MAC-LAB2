@@ -7,13 +7,13 @@ import jade.lang.acl.ACLMessage;
 import java.util.List;
 import java.util.Random;
 
-public class SendParams extends WakerBehaviour {
+public class SendParamsBehaviour extends WakerBehaviour {
     List<AID> receivers;
     double x;
     double delta;
     private Random r = new Random();
 
-    public SendParams(Agent a, long time, List<AID> receivers, double x, double delta) {
+    public SendParamsBehaviour(Agent a, long time, List<AID> receivers, double x, double delta) {
         super(a, time);
         this.receivers = receivers;
         this.x = x;

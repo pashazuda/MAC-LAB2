@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 @Slf4j
-public class InitiatorTransfer extends WakerBehaviour {
+public class InitiatorTransferBehaviour extends WakerBehaviour {
     private final List<String> agents = Arrays.asList("Agent1", "Agent2", "Agent3");
     private Random r = new Random();
     double x;
@@ -17,7 +17,7 @@ public class InitiatorTransfer extends WakerBehaviour {
 
     int initiatorId;
 
-    public InitiatorTransfer(Agent a, long time, double x, double delta) {
+    public InitiatorTransferBehaviour(Agent a, long time, double x, double delta) {
         super(a, time);
         this.x = x;
         this.delta = delta;
@@ -26,8 +26,6 @@ public class InitiatorTransfer extends WakerBehaviour {
 
     @Override
     protected void onWake() {
-        log.info("Значение x=" + x);
-        log.info("Значение delta=" + delta);
         initiatorId = r.nextInt(agents.size());
 
         while (agents.get(initiatorId).equals(myAgent.getLocalName())){

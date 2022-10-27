@@ -14,4 +14,5 @@ public class CalculateFunction {
         double result = Math.cos(x);
         return result;
     }
+
 }

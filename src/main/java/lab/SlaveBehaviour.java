@@ -6,12 +6,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 
-public class AcceptRequestAndCalcFunction extends Behaviour {
+public class SlaveBehaviour extends Behaviour {
     double x;
     double delta;
     private MessageTemplate mt = MessageTemplate.and(
@@ -44,8 +43,8 @@ public class AcceptRequestAndCalcFunction extends Behaviour {
                         break;
                 }
             }
-            ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
-            response.setProtocol("Slave");
+            ACLMessage response = new ACLMessage(ACLMessage.REQUEST_WHEN);
+            response.setProtocol("ResponseFromSlave");
             response.setContent(funcResult.get(0) + ", " + funcResult.get(1) + ", " + funcResult.get(2));
             response.addReceiver(new AID(initiator.getSender().getLocalName(), false));
             myAgent.send(response);
